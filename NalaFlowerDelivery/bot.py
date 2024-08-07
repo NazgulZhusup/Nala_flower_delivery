@@ -1,12 +1,14 @@
 import logging
 import asyncio
 import requests
+import aiohttp
 from aiogram import Bot, Dispatcher, types
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters import CommandStart, Command
+import io
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -14,6 +16,7 @@ logging.basicConfig(level=logging.INFO)
 # Ваш токен от BotFather
 API_TOKEN = '6789035821:AAE0pdtUGw9X40fPAxT4t2GAXtewob5wXzg'
 API_BASE_URL = 'http://127.0.0.1:8000/api/'  # Убедитесь, что URL-адрес правильный
+MEDIA_BASE_URL = 'http://127.0.0.1:8000'  # Базовый URL для доступа к медиафайлам
 
 # Создание экземпляра бота и диспетчера
 bot = Bot(token=API_TOKEN)
@@ -25,6 +28,16 @@ class OrderStates(StatesGroup):
     WAITING_FOR_PRODUCT_ID = State()
     WAITING_FOR_QUANTITY = State()
     WAITING_FOR_ADDRESS = State()
+
+# Асинхронная функция для загрузки изображения
+async def fetch_image(image_url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(image_url) as response:
+            if response.status == 200:
+                return await response.read()
+            else:
+                logging.error(f"Failed to fetch image. Status code: {response.status}")
+                return None
 
 # Обработка команды /start
 @dp.message(CommandStart())
@@ -62,15 +75,25 @@ async def show_catalog(message: types.Message):
             if image_url:
                 # Убедитесь, что URL начинается с 'http://' или 'https://'
                 if not image_url.startswith(('http://', 'https://')):
-                    image_url = f"http://127.0.0.1:8000{image_url}"  # При необходимости добавьте базовый URL
+                    image_url = f"{MEDIA_BASE_URL}{image_url}"  # Добавляем базовый URL для доступа к медиафайлам
 
                 try:
-                    await bot.send_photo(
-                        chat_id=message.chat.id,
-                        photo=image_url,
-                        caption=catalog_text,
-                        parse_mode=ParseMode.MARKDOWN
-                    )
+                    # Загружаем изображение в память
+                    image_data = await fetch_image(image_url)
+
+                    if image_data:
+                        # Используем io.BytesIO для отправки изображения
+                        photo = types.BufferedInputFile(image_data, filename="product.jpg")
+
+                        # Отправляем изображение напрямую
+                        await bot.send_photo(
+                            chat_id=message.chat.id,
+                            photo=photo,
+                            caption=catalog_text,
+                            parse_mode=ParseMode.MARKDOWN
+                        )
+                    else:
+                        await message.reply("Failed to fetch image.")
                 except Exception as e:
                     logging.error(f"Failed to send image: {e}")
                     await message.reply(catalog_text, parse_mode=ParseMode.MARKDOWN)
@@ -142,8 +165,6 @@ async def process_address(message: types.Message, state: FSMContext):
     product_price = user_data.get('product_price')
     total_price = product_price * quantity
 
-    address = user_data.get('address')
-
     # Логирование отправляемых данных
     logging.info(f"Placing order with Product ID: {product_id}, Quantity: {quantity}, Address: {address}")
 
@@ -156,9 +177,7 @@ async def process_address(message: types.Message, state: FSMContext):
     })
 
     if response.status_code == 201:
-        order_data = response.json()
-        order_id = order_data.get('id', 'unknown')  # Убедитесь, что вы получаете order_id
-        payment_url = f"http://127.0.0.1:8000/payments/{order_id}/"  # Ссылка на оплату
+        payment_url = f"http://127.0.0.1:8000/payments/{response.json().get('order_id')}/"  # Ссылка на оплату
         await message.reply(
             f"Your order has been placed successfully!\n\n"
             f"**Total Price**: ${total_price}\n"
