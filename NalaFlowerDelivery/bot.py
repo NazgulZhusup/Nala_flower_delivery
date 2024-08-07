@@ -56,16 +56,24 @@ async def show_catalog(message: types.Message):
                 f"**Price**: ${product['price']}\n"
                 f"**Description**: {product['description']}\n"
             )
-            image_url = product.get('image', '')  # Предполагаем, что URL изображения хранится в поле image
+            image_url = product.get('image')  # Предполагаем, что URL изображения хранится в поле image
 
             # Отправка сообщения с изображением продукта
             if image_url:
-                await bot.send_photo(
-                    chat_id=message.chat.id,
-                    photo=image_url,
-                    caption=catalog_text,
-                    parse_mode=ParseMode.MARKDOWN
-                )
+                # Убедитесь, что URL начинается с 'http://' или 'https://'
+                if not image_url.startswith(('http://', 'https://')):
+                    image_url = f"http://127.0.0.1:8000{image_url}"  # При необходимости добавьте базовый URL
+
+                try:
+                    await bot.send_photo(
+                        chat_id=message.chat.id,
+                        photo=image_url,
+                        caption=catalog_text,
+                        parse_mode=ParseMode.MARKDOWN
+                    )
+                except Exception as e:
+                    logging.error(f"Failed to send image: {e}")
+                    await message.reply(catalog_text, parse_mode=ParseMode.MARKDOWN)
             else:
                 await message.reply(catalog_text, parse_mode=ParseMode.MARKDOWN)
 
