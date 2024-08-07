@@ -1,4 +1,4 @@
-<!-- templates/registration/signup.html -->
+<!-- templates/registration/login.html -->
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <title>Sign Up</title>
+    <title>Login</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -91,11 +91,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'order_history' %}">Order History</a>
                     </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'signup' %}">Sign Up <span class="sr-only">(current)</span></a>
-                    </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'login' %}">Login <span class="sr-only">(current)</span></a>
                     </li>
                 </ul>
             </div>
@@ -103,13 +103,13 @@
     </nav>
 
     <div class="container">
-        <h2>Sign Up</h2>
+        <h2>Login</h2>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Sign Up</button>
+            <button type="submit" class="btn btn-primary">Login</button>
         </form>
-        <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+        <p>Don't have an account? <a href="{% url 'signup' %}">Sign Up</a></p>
     </div>
 
     <!-- Footer -->

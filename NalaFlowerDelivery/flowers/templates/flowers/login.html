@@ -1,22 +1,76 @@
+<!-- templates/registration/login.html -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <title>Login</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 500px;
+            margin-top: 50px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control {
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            color: #28a745;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+
+        p {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        p a {
+            color: #28a745;
+            text-decoration: none;
+        }
+
+        p a:hover {
+            color: #218838;
+        }
+    </style>
 </head>
+
 <body>
-    {% extends 'base.html' %}
-
-{% block content %}
-<h2>Login</h2>
-<form method="post" class="mt-4">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
-<p class="mt-2">Don't have an account? <a href="{% url 'signup' %}">Sign up here</a>.</p>
-{% endblock %}
-
-
+    <div class="container">
+        <h2>Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <p>Don't have an account? <a href="{% url 'signup' %}">Sign Up</a></p>
+    </div>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
+
 </html>

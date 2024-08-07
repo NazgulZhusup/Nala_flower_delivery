@@ -46,6 +46,18 @@ async def start_command(message: types.Message, state: FSMContext):
         "Welcome to Nala Flower Bot! You can view our catalog with /catalog and make an order with /order."
     )
 
+async def help_command(message: types.Message):
+    help_text = (
+        "**Here are the available commands:**\n"
+        "/start - Start the bot\n"
+        "/catalog - View our flower catalog\n"
+        "/order - Place a new order\n"
+        "/status - Check the status of your orders\n"
+        "/help - Show this help message"
+    )
+    await message.reply(help_text, parse_mode=ParseMode.MARKDOWN)
+
+
 # Обработка команды /catalog для отображения каталога
 @dp.message(Command(commands=['catalog']))
 async def show_catalog(message: types.Message):
@@ -191,11 +203,43 @@ async def process_address(message: types.Message, state: FSMContext):
 
     await state.clear()
 
+async def check_status(message: types.Message):
+    try:
+        # Запрос к API для получения заказов пользователя
+        response = requests.get(f'{API_BASE_URL}orders/', params={'user_id': message.from_user.id})
+        response.raise_for_status()
+        orders = response.json()
+
+        if not orders:
+            await message.reply("You have no orders yet.")
+            return
+
+        status_text = "**Your Orders:**\n\n"
+        for order in orders:
+            status_text += (
+                f"**Order ID**: {order['id']}\n"
+                f"**Status**: {order['status']}\n"
+                f"**Order Date**: {order['order_date']}\n"
+                f"**Items**:\n"
+            )
+            for item in order['items']:
+                status_text += f" - {item['product']} (x{item['quantity']})\n"
+            status_text += "\n"
+
+        await message.reply(status_text, parse_mode=ParseMode.MARKDOWN)
+
+    except requests.exceptions.RequestException as e:
+        logging.error(f"An error occurred while fetching orders: {e}")
+        await message.reply(f"An error occurred while fetching your orders: {e}")
+
+
 # Регистрация обработчиков
 def register_handlers(dp: Dispatcher):
     dp.message.register(start_command, CommandStart())
+    dp.message.register(help_command, Command(commands=['help']))
     dp.message.register(show_catalog, Command(commands=['catalog']))
     dp.message.register(start_order, Command(commands=['order']))
+    dp.message.register(check_status, Command(commands=['status']))
     dp.message.register(process_product_id, OrderStates.WAITING_FOR_PRODUCT_ID)
     dp.message.register(process_quantity, OrderStates.WAITING_FOR_QUANTITY)
     dp.message.register(process_address, OrderStates.WAITING_FOR_ADDRESS)
