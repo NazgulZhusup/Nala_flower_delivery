@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+{% block content %}
+<h1>Welcome to Nala Flower Delivery!</h1>
+<p>Your one-stop shop for beautiful flowers and fast delivery.</p>
+<a href="{% url 'catalog' %}" class="btn btn-primary">Browse Catalog</a>
+{% endblock %}
+
+</body>
+</html>

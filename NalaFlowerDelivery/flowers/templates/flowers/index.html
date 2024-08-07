@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <title>Nala Flower Delivery</title>
+    {% load static %}
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            width: auto;
+        }
+
+        /* Установка фонового изображения для Hero Section */
+        .hero-section {
+            background-image: url("{% static 'flowers/images/1648083165_7-kartinkin-net-p-kartinki-dlya-fona-tsveti-7.jpg' %}");
+            background-size: cover; /* Масштабирует изображение, чтобы покрыть всю область */
+            background-position: center; /* Центрирует изображение */
+            height: 80vh; /* Высота блока */
+            display: flex;
+            justify-content: center; /* Центрирует контент по горизонтали */
+            align-items: center; /* Центрирует контент по вертикали */
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6); /* Полупрозрачный черный наложение */
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .hero-content .btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .telegram-button {
+            background-color: #0088cc;
+            border: none;
+            color: white;
+        }
+
+        .telegram-button:hover {
+            background-color: #006699;
+        }
+
+        .catalog-button {
+            background-color: #28a745;
+            border: none;
+            color: white;
+        }
+
+        .catalog-button:hover {
+            background-color: #218838;
+        }
+
+        .qr-code-section {
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'flowers/images/logo.png' %}" alt="Nala Flower Delivery">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'catalog' %}">Catalog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cart' %}">Cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'order_history' %}">Order History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container hero-content">
+            <h1>Welcome to Nala Flower Delivery!</h1>
+            <p>Order your favorite flowers quickly and easily.</p>
+            <a href="https://t.me/NalaFlowerBot" target="_blank" class="btn telegram-button">
+                <i class="fab fa-telegram-plane"></i> Chat with us on Telegram
+            </a>
+            <a href="{% url 'catalog' %}" class="btn catalog-button">
+                <i class="fas fa-store"></i> Browse Catalog
+            </a>
+        </div>
+    </section>
+
+    <!-- QR Code Section -->
+    <div class="qr-code-section">
+        <h2>Scan to Chat with Our Telegram Bot</h2>
+        <img src="{% static 'flowers/images/telegram_qr_code.png' %}" alt="Scan to chat with Nala Flower Bot">
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Nala Flower Delivery. All rights reserved.</p>
+            <p>Contact us: <a href="mailto:info@nalaflowers.com">info@nalaflowers.com</a></p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

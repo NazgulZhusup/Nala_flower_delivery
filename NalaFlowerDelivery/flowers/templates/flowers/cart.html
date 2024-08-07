@@ -1,0 +1,209 @@
+{% load static %}
+{% load cart_extras %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Your Cart</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            width: auto;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .table {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th,
+        .table td {
+            vertical-align: middle;
+        }
+
+        .table thead th {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f2f2f2;
+        }
+
+        .btn-primary,
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-update {
+            font-size: 14px;
+            padding: 5px 10px;
+            margin-top: 5px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .total-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        footer a {
+            color: #28a745;
+        }
+
+        footer a:hover {
+            color: #fff;
+        }
+
+        .btn-proceed {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-proceed:hover {
+            background-color: #218838;
+        }
+
+        .btn-continue {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-continue:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <img src="{% static 'flowers/images/logo.png' %}" alt="Nala Flower Delivery">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'catalog' %}">Catalog</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'cart' %}">Cart <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'order_history' %}">Order History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Section -->
+    <div class="container">
+        <h1 class="text-center mb-4">Your Shopping Cart</h1>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>
+                        <form method="post" action="{% url 'update_cart' item.product.id item.quantity %}">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1"
+                                class="form-control d-inline-block" style="width: 70px;">
+                            <button type="submit" class="btn btn-update btn-primary">Update</button>
+                        </form>
+                    </td>
+                    <td>${{ item.product.price }}</td>
+                    <td>${{ item.product.price|multiply:item.quantity }}</td>
+                    <td>
+                        <a href="{% url 'remove_from_cart' item.product.id %}" class="btn btn-danger btn-sm">Remove</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Your cart is empty.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="total-price">Total Price: ${{ total_price }}</div>
+            <div>
+                <a href="{% url 'catalog' %}" class="btn btn-continue">Continue Shopping</a>
+                <a href="{% url 'checkout' %}" class="btn btn-proceed">Proceed to Checkout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Nala Flower Delivery. All rights reserved.</p>
+            <p>Contact us: <a href="mailto:info@nalaflowers.com">info@nalaflowers.com</a></p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
