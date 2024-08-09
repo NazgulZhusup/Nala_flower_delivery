@@ -28,6 +28,7 @@ dp = Dispatcher(storage=storage)
 class OrderStates(StatesGroup):
     WAITING_FOR_PRODUCT_ID = State()
     WAITING_FOR_QUANTITY = State()
+    WAITING_FOR_CONFIRMATION = State()
 
 
 # Асинхронная функция для загрузки изображения
@@ -185,7 +186,7 @@ async def process_order_confirmation(message: types.Message, state: FSMContext):
 
     if response.status_code == 201:
         order_id = response.json().get('id')
-        payment_url = f"http://127.0.0.1:8000/payments/{order_id}/"
+        payment_url = f"http://127.0.0.1:8000/checkout/{order_id}/"
         await message.reply(
             f"Your order has been placed successfully!\n\n"
             f"**Total Price**: ${total_price}\n"
@@ -197,6 +198,7 @@ async def process_order_confirmation(message: types.Message, state: FSMContext):
 
     await state.clear()
 
+    logging.info(f"Generated payment URL: {payment_url}")
 
 # Обработка команды /status для проверки статуса заказа
 async def check_status(message: types.Message):
@@ -248,3 +250,4 @@ async def main():
 # Запуск бота
 if __name__ == '__main__':
     asyncio.run(main())
+
