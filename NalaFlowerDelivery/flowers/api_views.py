@@ -1,5 +1,4 @@
 # flowers/api_views.py
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,7 +9,7 @@ from rest_framework import viewsets  # Импорт viewsets
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import Product
-from .serializers import ProductSerializer
+from .serializers import OrderSerializer, ProductSerializer
 
 # Сериализатор продуктов
 class ProductViewSet(viewsets.ViewSet):
@@ -24,7 +23,9 @@ class ProductViewSet(viewsets.ViewSet):
         product = get_object_or_404(Product, pk=pk)
         serializer = ProductSerializer(product)
         return Response(serializer.data)
-# API для создания заказа
+
+
+
 @api_view(['POST'])
 def create_order(request):
     try:
@@ -33,27 +34,15 @@ def create_order(request):
         quantities = request.data.get('quantities', [])
         address = request.data.get('address')
 
-        # Проверка входных данных
-        if not address or len(address) < 10:
-            return Response({'error': 'Invalid address'}, status=status.HTTP_400_BAD_REQUEST)
+        if not (user_id and product_ids and quantities and address):
+            return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if len(product_ids) != len(quantities):
-            return Response({'error': 'Product IDs and quantities do not match'}, status=status.HTTP_400_BAD_REQUEST)
-
-        user = get_object_or_404(User, pk=user_id)
-
-        # Создание заказа
-        order = Order.objects.create(user=user, address=address, status='pending')
-
-        # Логирование создания заказа
-        print(f"Creating order for user {user.username} with address {address}")
-
+        order = Order.objects.create(user_id=user_id, address=address)
         for product_id, quantity in zip(product_ids, quantities):
-            product = get_object_or_404(Product, id=product_id)
+            product = Product.objects.get(id=product_id)
             OrderItem.objects.create(order=order, product=product, quantity=quantity)
 
-        return Response({'message': 'Order created successfully'}, status=status.HTTP_201_CREATED)
+        serializer = OrderSerializer(order)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:
-        # Логирование ошибки на сервере
-        print(f"Error creating order: {str(e)}")
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

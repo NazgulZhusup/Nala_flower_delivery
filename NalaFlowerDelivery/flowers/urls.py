@@ -23,6 +23,7 @@ urlpatterns = [
     path('update_cart/<int:product_id>/<int:quantity>/', views.update_cart, name='update_cart'),  # Маршрут для обновления корзины
     path('api/', include(router.urls)),  # Подключение маршрутов API
     path('api/orders/', api_views.create_order, name='create_order'),  # API для заказов
+    path('orders/create', views.create_order, name='create_order'),
 ]
 
 if settings.DEBUG:

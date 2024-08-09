@@ -6,6 +6,8 @@ from .models import Product, Order, OrderItem
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'price')
+    search_fields = ('name',)
+
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -17,3 +19,5 @@ class OrderAdmin(admin.ModelAdmin):
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ('order', 'product', 'quantity')
     list_filter = ('order',)
+
+
