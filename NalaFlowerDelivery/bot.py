@@ -156,12 +156,12 @@ async def process_quantity(message: types.Message, state: FSMContext):
     total_price = product_price * quantity
 
     # Генерация ссылки на страницу заказа
-    order_url = f"http://127.0.0.1:8000/orders/create?product_id={product_id}&quantity={quantity}&price={total_price:.2f}"
+    checkout_url = f"http://127.0.0.1:8000/checkout?product_id={product_id}&quantity={quantity}&price={total_price:.2f}"
 
     await message.reply(
         f"Your order has been prepared!\n\n"
         f"**Total Price**: ${total_price:.2f}\n"
-        f"[Complete Order]({order_url})",
+        f"[Proceed to Checkout]({checkout_url})",
         parse_mode=ParseMode.MARKDOWN
     )
 
@@ -171,6 +171,7 @@ async def process_quantity(message: types.Message, state: FSMContext):
 # Ваша функция для обработки заказа
 @dp.message(OrderStates.WAITING_FOR_CONFIRMATION)
 async def process_order_confirmation(message: types.Message, state: FSMContext):
+    global payment_url
     user_data = await state.get_data()
     product_id = user_data.get('product_id')
     quantity = user_data.get('quantity')
@@ -198,37 +199,9 @@ async def process_order_confirmation(message: types.Message, state: FSMContext):
 
     await state.clear()
 
-    logging.info(f"Generated payment URL: {payment_url}")
 
 # Обработка команды /status для проверки статуса заказа
-async def check_status(message: types.Message):
-    try:
-        # Запрос к API для получения заказов пользователя с использованием метода POST
-        response = requests.post(f'{API_BASE_URL}orders/', json={'user_id': message.from_user.id})
-        response.raise_for_status()
-        orders = response.json()
 
-        if not orders:
-            await message.reply("You have no orders yet.")
-            return
-
-        status_text = "**Your Orders:**\n\n"
-        for order in orders:
-            status_text += (
-                f"**Order ID**: {order['id']}\n"
-                f"**Status**: {order['status']}\n"
-                f"**Order Date**: {order['order_date']}\n"
-                f"**Items**:\n"
-            )
-            for item in order['items']:
-                status_text += f" - {item['product']} (x{item['quantity']})\n"
-            status_text += "\n"
-
-        await message.reply(status_text, parse_mode=ParseMode.MARKDOWN)
-
-    except requests.exceptions.RequestException as e:
-        logging.error(f"An error occurred while fetching orders: {e}")
-        await message.reply(f"An error occurred while fetching your orders: {e}")
 
 
 # Регистрация обработчиков
@@ -236,7 +209,6 @@ def register_handlers(dp: Dispatcher):
     dp.message.register(start_command, CommandStart())
     dp.message.register(show_catalog, Command(commands=['catalog']))
     dp.message.register(start_order, Command(commands=['order']))
-    dp.message.register(check_status, Command(commands=['status']))
     dp.message.register(process_product_id, OrderStates.WAITING_FOR_PRODUCT_ID)
     dp.message.register(process_quantity, OrderStates.WAITING_FOR_QUANTITY)
 
