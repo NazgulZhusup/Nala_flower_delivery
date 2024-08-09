@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/', include(router.urls)),  # Подключение маршрутов API
     path('api/orders/', api_views.create_order, name='create_order'),  # API для заказов
     path('orders/create', views.create_order, name='create_order'),
+    path('payments/<int:order_id>/', views.payment_view, name='payment'),
 ]
 
 if settings.DEBUG:

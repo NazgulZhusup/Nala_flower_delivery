@@ -5,17 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0fe24388-06a2-49ca-8eec-d1483a3edcbd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/templates/flowers/payment.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NalaFlowerDelivery/NalaFlowerDelivery/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/NalaFlowerDelivery/NalaFlowerDelivery/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NalaFlowerDelivery/NalaFlowerDelivery/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/NalaFlowerDelivery/NalaFlowerDelivery/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/NalaFlowerDelivery/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/NalaFlowerDelivery/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/api_views.py" beforeDir="false" afterPath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/api_views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/migrations/0002_remove_product_image_product_image_url_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/migrations/0003_remove_product_image_url_product_image.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/templates/flowers/catalog.html" beforeDir="false" afterPath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/templates/flowers/catalog.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/NalaFlowerDelivery/flowers/views.py" afterDir="false" />
     </list>

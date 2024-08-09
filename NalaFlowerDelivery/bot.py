@@ -167,6 +167,37 @@ async def process_quantity(message: types.Message, state: FSMContext):
     await state.clear()
 
 
+# Ваша функция для обработки заказа
+@dp.message(OrderStates.WAITING_FOR_CONFIRMATION)
+async def process_order_confirmation(message: types.Message, state: FSMContext):
+    user_data = await state.get_data()
+    product_id = user_data.get('product_id')
+    quantity = user_data.get('quantity')
+    total_price = user_data.get('total_price')
+
+    # Создаем заказ через API
+    response = requests.post(f'{API_BASE_URL}orders/', json={
+        'user_id': message.from_user.id,
+        'product_ids': [product_id],
+        'quantities': [quantity],
+        'total_price': total_price
+    })
+
+    if response.status_code == 201:
+        order_id = response.json().get('id')
+        payment_url = f"http://127.0.0.1:8000/payments/{order_id}/"
+        await message.reply(
+            f"Your order has been placed successfully!\n\n"
+            f"**Total Price**: ${total_price}\n"
+            f"[Pay Now]({payment_url})",
+            parse_mode=ParseMode.MARKDOWN
+        )
+    else:
+        await message.reply("There was an error placing your order. Please try again.")
+
+    await state.clear()
+
+
 # Обработка команды /status для проверки статуса заказа
 async def check_status(message: types.Message):
     try:

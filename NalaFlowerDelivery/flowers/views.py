@@ -172,14 +172,41 @@ def checkout(request):
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
+            # Создаем заказ и сохраняем итоговую сумму
             order = Order.objects.get(user=request.user, status='pending')
+            order.total_price = total_price
             order.status = 'completed'
             order.save()
-            return redirect('order_success')
+
+            # После сохранения заказа перенаправляем на страницу оплаты
+            return redirect('payment', order_id=order.id)  # Переход на страницу оплаты с передачей ID заказа
     else:
         form = CheckoutForm()
 
     return render(request, 'flowers/checkout.html', {'form': form, 'cart_items': cart_items, 'total_price': total_price})
+
+@login_required
+def payment(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if request.method == 'POST':
+        # Логика оплаты
+        pass
+
+    return render(request, 'flowers/payment.html', {'order': order})
+
+@login_required
+def payment_view(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if request.method == 'POST':
+        # Здесь можно интегрировать систему оплаты, например, через PayPal, Stripe и т.д.
+        # После успешной оплаты:
+        order.status = 'completed'
+        order.save()
+        return redirect('order_success')
+
+    return render(request, 'flowers/payment.html', {'order': order})
 
 
 @login_required
@@ -194,6 +221,7 @@ def order_history(request):
         for item in order.items.all():
             item.total_price = item.product.price * item.quantity
     return render(request, 'flowers/order_history.html', {'orders': orders})
+
 
 
 @login_required
